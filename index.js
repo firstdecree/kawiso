@@ -45,7 +45,6 @@
         try { return JSON.parse(cT.decrypt(session.d)) }
         catch { return false }
     }
-
     // const sAES256E = (password, string) => simpleAES256.encrypt(password, string).toString("hex")
     const sAES256D = (password, string) => simpleAES256.decrypt(password, Buffer.from(string, "hex")).toString("utf8")
 
@@ -76,7 +75,8 @@
         next()
     }
 
-    async function getBasicStats(hashedUsername, startDate, endDate, domain) {
+    const getBasicStats = async(hashedUsername, startDate, endDate, domain)=>{
+        // Variables
         const match = {
             hashedUsername,
             ts: { $gte: startDate.getTime(), $lte: endDate.getTime() }
@@ -86,6 +86,7 @@
         const hits = await analyticsData.find(match).toArray()
         if (hits.length === 0) return { totalVisits: 0, uniqueUsers: 0, avgDuration: 0, bounceRate: 0 }
 
+        // Core
         const totalVisits = hits.length
         const uniqueUsers = new Set(hits.map(h => h.fingerprint)).size
         const fpGroups = {}
@@ -110,7 +111,8 @@
         return { totalVisits, uniqueUsers, avgDuration, bounceRate }
     }
 
-    async function getAnalytics(hashedUsername, startDate, endDate, domain) {
+    const getAnalytics = async(hashedUsername, startDate, endDate, domain)=>{
+        // Variables
         const match = {
             hashedUsername,
             ts: { $gte: startDate.getTime(), $lte: endDate.getTime() }
@@ -138,6 +140,8 @@
         const userArr = []
         const cursor = new Date(startDate)
         cursor.setHours(0, 0, 0, 0)
+
+        // Core
         while (cursor <= endDate) {
             const label = cursor.toLocaleDateString("en-US", { month: "short", day: "numeric" })
             labels.push(label)
@@ -305,24 +309,37 @@
     web.set("views", path.join(__dirname, "views"))
     web.use(express.json())
     web.use((req, res, next) => {
+        // Validations
         if(req.path.endsWith(".html")) return res.redirect(req.path.replace(/.html$/, ""))
         if (req.path !== "/analytics.js" && req.path !== "/collect") {
             const userAgent = req.headers["user-agent"]
             if (!userAgent || isbot(userAgent)) return res.redirect("https://firstdecree.org/")
         }
+
+        // Core
         next()
     })
 
     // Main
     web.get("/login", async(req, res, next)=>{
+        // Variables
         const userData = await dS(req.cookies)
+
+        // Validations
         if(userData) return res.redirect("/dashboard")
+
+        // Core
         next()
     })
 
     web.get("/register", async(req, res, next)=>{
+        // Variables
         const userData = await dS(req.cookies)
+
+        // Validations
         if(userData) return res.redirect("/dashboard")
+
+        // Core
         next()
     })
     web.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] }))

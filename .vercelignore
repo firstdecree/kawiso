@@ -3,3 +3,4 @@ pnpm-lock.yaml
 features.txt
 vercel-prod
 example.config.toml
+.git
