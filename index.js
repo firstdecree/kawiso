@@ -45,20 +45,21 @@
         try { return JSON.parse(cT.decrypt(session.d)) }
         catch { return false }
     }
-    // const sAES256E = (password, string) => simpleAES256.encrypt(password, string).toString("hex")
+
+    const sAES256E = (password, string) => simpleAES256.encrypt(password, string).toString("hex")
     const sAES256D = (password, string) => simpleAES256.decrypt(password, Buffer.from(string, "hex")).toString("utf8")
 
-    const generateUUID = ()=>{
+    const generateUUID = () => {
         // Variables
         const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         const lengths = [8, 8, 8, 8]
 
         // Core
-        return lengths.map((len)=>{
+        return lengths.map((len) => {
             const bytes = crypto.randomBytes(len)
             var part = ""
 
-            for ( let i = 0; i < len; i++ ) part += chars[bytes[i] % chars.length]
+            for (let i = 0; i < len; i++) part += chars[bytes[i] % chars.length]
             return part
         }).join("-")
     }
@@ -75,7 +76,7 @@
         next()
     }
 
-    const getBasicStats = async(hashedUsername, startDate, endDate, domain)=>{
+    const getBasicStats = async (hashedUsername, startDate, endDate, domain) => {
         // Variables
         const match = {
             hashedUsername,
@@ -111,7 +112,7 @@
         return { totalVisits, uniqueUsers, avgDuration, bounceRate }
     }
 
-    const getAnalytics = async(hashedUsername, startDate, endDate, domain)=>{
+    const getAnalytics = async (hashedUsername, startDate, endDate, domain) => {
         // Variables
         const match = {
             hashedUsername,
@@ -235,9 +236,9 @@
         const toDistArray = (map) => {
             const total = Object.values(map).reduce((a, b) => a + b, 0) || 1
             return Object.entries(map)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 6)
-            .map(([label, count]) => ({ label, count, pct: Math.round(count / total * 100) }))
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6)
+                .map(([label, count]) => ({ label, count, pct: Math.round(count / total * 100) }))
         }
 
         var avgDuration = 0
@@ -310,7 +311,7 @@
     web.use(express.json())
     web.use((req, res, next) => {
         // Validations
-        if(req.path.endsWith(".html")) return res.redirect(req.path.replace(/.html$/, ""))
+        if (req.path.endsWith(".html")) return res.redirect(req.path.replace(/.html$/, ""))
         if (req.path !== "/analytics.js" && req.path !== "/collect") {
             const userAgent = req.headers["user-agent"]
             if (!userAgent || isbot(userAgent)) return res.redirect("https://firstdecree.org/")
@@ -321,23 +322,23 @@
     })
 
     // Main
-    web.get("/login", async(req, res, next)=>{
+    web.get("/login", async (req, res, next) => {
         // Variables
         const userData = await dS(req.cookies)
 
         // Validations
-        if(userData) return res.redirect("/dashboard")
+        if (userData) return res.redirect("/dashboard")
 
         // Core
         next()
     })
 
-    web.get("/register", async(req, res, next)=>{
+    web.get("/register", async (req, res, next) => {
         // Variables
         const userData = await dS(req.cookies)
 
         // Validations
-        if(userData) return res.redirect("/dashboard")
+        if (userData) return res.redirect("/dashboard")
 
         // Core
         next()
@@ -346,7 +347,7 @@
 
     web.post("/api/login", async (req, res) => {
         const userData = await dS(req.cookies)
-        if(userData) return res.send("1")
+        if (userData) return res.send("1")
 
         // Variables
         const { username, password } = req.body
@@ -369,7 +370,7 @@
 
     web.post("/api/register", async (req, res) => {
         const userData = await dS(req.cookies)
-        if(userData) return res.send("1")
+        if (userData) return res.send("1")
 
         // Variables
         const { username, password } = req.body
@@ -379,7 +380,7 @@
         if (accountData) return res.send("0")
 
         // Core
-        if(config.production.allowRegistration){
+        if (config.production.allowRegistration) {
             await users.insertOne({
                 hashedUsername: SHA512(username),
                 username: sAES256E(password, username),
@@ -391,7 +392,7 @@
                 }
             })
         }
-        
+
         res.send("1")
     })
 
@@ -476,10 +477,10 @@
                             else if (hr >= 12 && hr < 18) timeOfD = "afternoon"
                             else if (hr >= 18 && hr < 24) timeOfD = "evening"
                             else timeOfD = "night"
-                        }catch{}
+                        } catch { }
                     }
                 }
-            }catch{}
+            } catch { }
         }
 
         try {
@@ -487,7 +488,7 @@
                 const ln = new Intl.DisplayNames(['en'], { type: 'language' })
                 language = ln.of(language.toLowerCase()) || language
             }
-        } catch {}
+        } catch { }
 
         await analyticsData.insertOne({
             hashedUsername: user.hashedUsername,
@@ -529,7 +530,7 @@
         res.end()
     })
 
-    web.get("/api/domains", requireAuth, async(req, res)=>{
+    web.get("/api/domains", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const domains = await analyticsData.distinct("domain", {
@@ -558,13 +559,13 @@
             if (!s || !e) return res.status(400).json({ error: "Need start and end" })
             start = new Date(s + "T00:00:00.000Z")
             now.setTime(new Date(e + "T23:59:59.999Z").getTime())
-        }else{start.setMonth(now.getMonth() - 1)}
+        } else { start.setMonth(now.getMonth() - 1) }
 
         const data = await getAnalytics(user.hashedUsername, start, now, domain)
         res.json({ ok: true, data })
     })
 
-    web.get("/dashboard", requireAuth, async(req, res)=>{
+    web.get("/dashboard", requireAuth, async (req, res) => {
         const user = req._user
         // Variables
         const domains = await analyticsData.distinct("domain", {
@@ -577,7 +578,7 @@
         res.render("dashboard", { user, domains, userDoc, activeDomain, req })
     })
 
-    web.get("/map", requireAuth, async(req, res)=>{
+    web.get("/map", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const domains = await analyticsData.distinct("domain", { hashedUsername: user.hashedUsername }).then(d => d.filter(v => v && v !== "unknown"))
@@ -592,7 +593,7 @@
         res.render("map", { user, analytics, domains, userDoc, activeDomain, req })
     })
 
-    web.get("/account-settings", requireAuth, async(req, res)=>{
+    web.get("/account-settings", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const domains = await analyticsData.distinct("domain", { hashedUsername: user.hashedUsername }).then(d => d.filter(v => v && v !== "unknown"))
@@ -604,7 +605,7 @@
         res.render("account-settings", { user, domains, activeDomain, userDoc, whitelistedDomains })
     })
 
-    web.get("/pages", requireAuth, async(req, res)=>{
+    web.get("/pages", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const domains = await analyticsData.distinct("domain", { hashedUsername: user.hashedUsername }).then((d) => d.filter(v => v && v !== "unknown"))
@@ -616,7 +617,7 @@
         res.render("pages", { user, domains, activeDomain, userDoc, whitelistedDomains })
     })
 
-    web.post("/api/settings/whitelisted-domains", requireAuth, async(req, res)=>{
+    web.post("/api/settings/whitelisted-domains", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const { domains } = req.body
@@ -629,7 +630,7 @@
         res.json({ ok: true })
     })
 
-    web.post("/api/settings/purge-data", requireAuth, async(req, res)=>{
+    web.post("/api/settings/purge-data", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
 
@@ -638,7 +639,17 @@
         res.json({ ok: true })
     })
 
-    web.get("/api/pages", requireAuth, async(req, res)=>{
+    web.post("/api/settings/delete-account", requireAuth, async (req, res) => {
+        // Variables
+        const user = req._user
+
+        // Core
+        await analyticsData.deleteMany({ hashedUsername: user.hashedUsername })
+        await users.deleteOne({ hashedUsername: user.hashedUsername })
+        res.clearCookie("d").json({ ok: true })
+    })
+
+    web.get("/api/pages", requireAuth, async (req, res) => {
         // Variables
         const user = req._user
         const range = req.query.range || "1m"
@@ -678,29 +689,29 @@
         prevHits.forEach(h => { prevPageMap[h.path] = (prevPageMap[h.path] || 0) + 1 })
 
         const pages = Object.entries(pageMap)
-        .map(([path, count]) => {
-            const prevCount = prevPageMap[path] || 0
-            var growth = 0
+            .map(([path, count]) => {
+                const prevCount = prevPageMap[path] || 0
+                var growth = 0
 
-            if (prevCount === 0) {
-                growth = "New"
-            }else{
-                growth = Math.round(((count - prevCount) / prevCount) * 100)
-            }
+                if (prevCount === 0) {
+                    growth = "New"
+                } else {
+                    growth = Math.round(((count - prevCount) / prevCount) * 100)
+                }
 
-            const pathHits = hits.filter(h => h.path === path).sort((a, b) => a.ts - b.ts)
-            const dailyData = Array(7).fill(0)
-            for (let i = 6; i >= 0; i--) {
-                const dayStart = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
-                dayStart.setHours(0, 0, 0, 0)
-                const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
-                const dayCount = pathHits.filter(h => h.ts >= dayStart.getTime() && h.ts < dayEnd.getTime()).length
-                dailyData[6 - i] = dayCount
-            }
+                const pathHits = hits.filter(h => h.path === path).sort((a, b) => a.ts - b.ts)
+                const dailyData = Array(7).fill(0)
+                for (let i = 6; i >= 0; i--) {
+                    const dayStart = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+                    dayStart.setHours(0, 0, 0, 0)
+                    const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
+                    const dayCount = pathHits.filter(h => h.ts >= dayStart.getTime() && h.ts < dayEnd.getTime()).length
+                    dailyData[6 - i] = dayCount
+                }
 
-            return { path, visits: count, growth, sparkline: dailyData }
-        })
-        .sort((a, b) => b.visits - a.visits)
+                return { path, visits: count, growth, sparkline: dailyData }
+            })
+            .sort((a, b) => b.visits - a.visits)
 
         res.json({ ok: true, pages })
     })

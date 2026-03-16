@@ -1208,9 +1208,8 @@
         </header>
         <div class="page">
             <div id="empty-state" class="empty-state">
-                <div class="empty-state-icon">📡</div>
-                <div class="empty-state-title">No data yet for this period</div>
-                <p class="empty-state-sub">Add the tracking snippet below to your website. Once visitors arrive,
+                <div class="empty-state-title">No data yet</div>
+                <p class="empty-state-sub">First whitelist the website domain on the Account Settings, then add the tracking snippet below to your website head. Once visitors arrive,
                     analytics will appear here automatically.</p>
                 <div class="snippet-box">
                     &lt;script src="<%= typeof req !=='undefined' ? req.protocol + '://' + req.get('host') : '' %>
