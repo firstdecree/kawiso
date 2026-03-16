@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawiso</title>
+    <meta name="description"
+        content="Powerful, lightweight and user-friendly privacy-focused analytics platform. Cookieless, open-source and fully compliant with the First Decree.">
+    <link rel="icon" href="/assets/img/favicon.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="/analytics.js" data-id="snGdEs-51PAo6-bmttA-FmHEIW"></script>
+    <script>
+        // Main
+        document.addEventListener("DOMContentLoaded", () => {
+        const observerOptions = { threshold: 0.1 }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = "running"
+                    observer.unobserve(entry.target)
+                }
+            })
+        }, observerOptions)
+
+        document.querySelectorAll(".feature-card, .pricing-card, .section-header").forEach((el) => {
+            el.style.animationPlayState = "paused"
+            observer.observe(el)
+        })
+
+        // Slider
+        const slider = document.getElementById("screenshot-slider")
+        const prevBtn = document.getElementById("slider-prev")
+        const nextBtn = document.getElementById("slider-next")
+        let currentSlide = 0
+        const slides = slider.children
+        const totalSlides = slides.length
+
+        const updateSlider = () => {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`
+        }
+
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener("click", () => {
+                currentSlide = (currentSlide === 0) ? totalSlides - 1 : currentSlide - 1
+                updateSlider()
+            })
+
+            nextBtn.addEventListener("click", () => {
+                currentSlide = (currentSlide === totalSlides - 1) ? 0 : currentSlide + 1
+                updateSlider()
+            })
+        }
+    })
+    </script>
+    <style>
+        :root {
+            --bg-color: #030303;
+            --bg-secondary: transparent;
+            --surface-color: rgba(18, 18, 18, 0.5);
+            --surface-hover: rgba(26, 26, 26, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-muted: #737373;
+            --primary-accent: #ffffff;
+            --primary-accent-hover: #e5e5e5;
+            --glow-accent: rgba(255, 255, 255, 0.15);
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 12px 20px -4px rgba(0, 0, 0, 0.6), 0 0 20px var(--glow-accent);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 0 30px var(--glow-accent);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(20, 20, 20, 0.8), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(20, 20, 20, 0.8), transparent 25%);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-accent);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-accent);
+            color: #000000;
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-accent-hover);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 5% 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--primary-accent);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.04em;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-title span {
+            color: transparent;
+            -webkit-text-stroke: 1px var(--primary-accent);
+            position: relative;
+            background: linear-gradient(135deg, #fff 0%, #a3a3a3 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title span::after {
+            display: none;
+        }
+
+        .hero-description {
+            font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            font-weight: 400;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            padding: 4rem 5%;
+            width: 100%;
+            position: relative;
+        }
+
+        #pricing {
+            margin-top: 3.5rem;
+        }
+
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-light {
+            background-color: transparent;
+        }
+
+        .section-light::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(20, 20, 20, 0.6) 50%, transparent 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .screenshot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+            margin-top: -1rem;
+            padding: 2rem;
+            animation: fadeUp 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .screenshot-wrapper {
+            position: relative;
+            border-radius: 16px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.2));
+            box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .screenshot-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--primary-accent);
+            font-size: 1.25rem;
+            margin-bottom: 1.2rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card:hover .feature-icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--primary-accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem 1.6rem;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        div.pricing-card.yearly {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+            background: linear-gradient(180deg, rgba(30, 30, 30, 0.4) 0%, rgba(18, 18, 18, 0.5) 100%);
+        }
+
+        div.pricing-card.yearly:hover {
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
+        }
+
+        .most-popular-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(200, 200, 200, 1) 100%);
+            color: #000000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .pricing-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: baseline;
+            letter-spacing: -0.02em;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex: 1;
+        }
+
+        .pricing-features li {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li svg {
+            color: var(--primary-accent);
+            flex-shrink: 0;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .client-reviews-support {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+            background: var(--surface-hover);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-color);
+        }
+
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 4rem 5% 2rem;
+            background: radial-gradient(ellipse at bottom, rgba(20, 20, 20, 0.5) 0%, transparent 100%);
+            margin-top: 5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            filter: grayscale(100%) opacity(80%);
+        }
+
+        .footer-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 320px;
+            line-height: 1.6;
+        }
+
+        .footer-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-accent);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-bottom-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-links-inline a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links-inline a:hover {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 992px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+
+            .navbar {
+                padding: 0.75rem 5%;
+            }
+
+            .hero {
+                padding: 4rem 5% 2rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="nav-left">
+            <img src="/assets/img/logo.png" alt="Kawiso Logo" class="nav-logo"
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iMTEgMkwyIDdsMTAgNSAxMC01LTEwLTV6TTIgMTdsMTAgNSAxMC01TTIgMTJsMTAgNSAxMC01Ii8+PC9zdmc+'">
+            <span class="nav-brand">Kawiso</span>
+        </a>
+
+        <div class="nav-center">
+            <a href="#screenshot" class="nav-link">Product</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/login" class="btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-badge">✨ New: Anonymous Tracking</div>
+        <h1 class="hero-title">Analytics that respect <span>privacy</span></h1>
+        <p class="hero-description">Kawiso is a powerful, lightweight, and intuitive analytics platform. Gain actionable
+            insights without compromising user privacy. Fully open-source and First Decree compliant.</p>
+        <div class="hero-cta">
+            <a href="/login" class="btn-primary">Get Started</a>
+            <a href="#screenshot" class="btn-secondary">View Dashboard</a>
+        </div>
+    </main>
+
+    <section id="screenshot" class="section section-light">
+        <div class="section-inner">
+            <div class="screenshot-container" style="position: relative; overflow: hidden; border-radius: 12px;">
+                <button id="slider-prev" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
+                    &#10094;
+                </button>
+                <button id="slider-next" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
+                    &#10095;
+                </button>
+                <div class="screenshot-wrapper" id="screenshot-slider" style="display: flex; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
+                    <img src="./img/screenshots/kawiso-1.png" alt="Kawiso Dashboard Preview 1" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
+                    <img src="./img/screenshots/kawiso-2.png" alt="Kawiso Dashboard Preview 2" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
+                    <img src="./img/screenshots/kawiso-3.png" alt="Kawiso Dashboard Preview 3" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section">
+        <div class="section-inner">
+            <div class="section-header">
+                <div class="section-subtitle">Why choose Kawiso?</div>
+                <h2 class="section-title">Everything you need, nothing you don't.</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3 class="feature-title">Cookieless Tracking</h3>
+                    <p class="feature-desc">Respect your users privacy by gathering essential metrics without relying
+                        on cookies or invasive IP logging.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Lightweight Script</h3>
+                    <p class="feature-desc">Our tiny footprint (&lt;1KB) ensures your website remains incredibly fast
+                        and performant.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Real-time Data</h3>
+                    <p class="feature-desc">Monitor live visitors on your website with an elegant, responsive, and
+                        intuitive dashboard.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Global Outreach</h3>
+                    <p class="feature-desc">Identify precisely where your visitors are coming from worldwide with
+                        a simplified map.</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Device Reports</h3>
+                    <p class="feature-desc">Analyze the devices, operating systems, and browsers your audience uses
+                        seamlessly.</p>
+                </div>
+                <div class="feature-card">
+
+                    <h3 class="feature-title">Referrer Insights</h3>
+                    <p class="feature-desc">Discover which domains or social platforms are driving your most valuable
+                        traffic.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section section-light">
+        <div class="section-inner">
+            <div class="section-header">
+                <div class="section-subtitle">Simple Plans</div>
+                <h2 class="section-title">Transparent pricing for everyone</h2>
+                <p style="margin-top: 0.8rem; color: var(--text-secondary); max-width: 600px; margin-left: auto; margin-right: auto; font-size: 0.9rem; line-height: 1.5;">All your purchases will be a great help to <em style="color:var(--text-primary)">The First Decree</em>.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Analytics</h3>
+                    <div class="pricing-price">$4.9<span>/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Unlimited Websites
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Unlimited pageviews
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            100% Data Ownership
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Supports The First Decree
+                        </li>
+                    </ul>
+                    <a href="https://discord.gg/KrgNkkJJrB" class="btn-secondary btn-full"
+                        style="text-align: center;">Subscribe Monthly</a>
+                </div>
+                <div class="pricing-card yearly">
+                    <div class="most-popular-badge">Most Popular</div>
+                    <h3 class="pricing-title">Professional</h3>
+                    <div class="pricing-price">$54.9<span>/yr</span></div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Unlimited Websites
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Unlimited pageviews
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            100% Data Ownership
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Priority support
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Supports The First Decree
+                        </li>
+                    </ul>
+                    <a href="https://discord.gg/KrgNkkJJrB" class="btn-primary btn-full"
+                        style="text-align: center;">Subscribe Yearly</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">
+                    <img src="/assets/img/logo.png" alt="Kawiso Logo" class="footer-logo"
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iMTEgMkwyIDdsMTAgNSAxMC01LTEwLTV6TTIgMTdsMTAgNSAxMC01TTIgMTJsMTAgNSAxMC01Ii8+PC9zdmc+'">
+                    <span class="nav-brand">Kawiso</span>
+                </div>
+                <p class="footer-desc">Powerful, lightweight and user-friendly privacy-focused analytics platform.
+                    Cookieless, open-source and fully compliant with the First Decree.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/firstdecree/kawiso">Documentation</a></li>
+                    <li><a href="https://discord.gg/KrgNkkJJrB">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service">Terms of Service</a></li>
+                    <li><a href="https://firstdecree.org/">First Decree</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-flex">
+                <div class="copyright">
+                    &copy; 2026 Kawiso. All rights reserved. Founded with 💖 by the Fuhrer.
+                </div>
+                <div class="footer-links-inline">
+                    <a href="https://github.com/firstdecree" target="_blank" rel="noopener noreferrer"
+                        aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                            <path
+                                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                            </path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

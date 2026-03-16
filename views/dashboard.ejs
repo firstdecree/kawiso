@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawiso</title>
+    <meta name="description" content="Kawiso">
+    <link rel="icon" href="/assets/img/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --sidebar-bg: #000000;
+            --surface: #0f0f0f;
+            --surface-2: #161616;
+            --surface-hover: #1c1c1c;
+            --border: #222222;
+            --border-light: #2a2a2a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-muted: #5a5a5a;
+            --accent: #7c3aed;
+            --accent-soft: rgba(124, 58, 237, 0.12);
+            --accent-2: #06b6d4;
+            --accent-2-soft: rgba(6, 182, 212, 0.12);
+            --green: #22c55e;
+            --green-soft: rgba(34, 197, 94, 0.12);
+            --red: #ef4444;
+            --orange: #f97316;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-display: 'Outfit', system-ui, sans-serif;
+            --sidebar-width: 260px;
+            --radius: 10px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 99px;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-logo {
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .site-selector {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .site-selector-btn {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .site-selector-btn:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .site-selector-btn svg {
+            width: 15px;
+            height: 15px;
+            color: var(--text-muted);
+        }
+
+        .site-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0.75rem;
+            right: 0.75rem;
+            margin-top: 4px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.5rem;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .site-dropdown.open {
+            display: block;
+        }
+
+        .site-dropdown-item {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-primary);
+        }
+
+        .site-dropdown-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            padding: 0 0.75rem;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 2px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.55rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--surface-2);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        #analytics-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        #analytics-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 58px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            background: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            gap: 1rem;
+        }
+
+        .topbar-title {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+
+        .topbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .topbar-range {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .range-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 0.7rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .range-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .range-btn.active {
+            background: var(--surface-2);
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .custom-range-wrap {
+            position: relative;
+        }
+
+        .custom-popover {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 50;
+            min-width: 280px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+
+        .custom-popover.open {
+            display: flex;
+        }
+
+        .custom-popover-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-muted);
+        }
+
+        .custom-popover-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .custom-popover-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .custom-popover-field label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .custom-popover-field input[type="date"] {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+            outline: none;
+            transition: border-color 0.15s;
+            width: 100%;
+            color-scheme: dark;
+        }
+
+        .custom-popover-field input[type="date"]:focus {
+            border-color: var(--accent);
+        }
+
+        .custom-apply-btn {
+            background: var(--text-primary);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.45rem 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            white-space: nowrap;
+            align-self: flex-end;
+        }
+
+        .custom-apply-btn:hover {
+            opacity: 0.85;
+        }
+
+        .topbar-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        .profile-wrap {
+            position: relative;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.3rem 0.6rem 0.3rem 0.4rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-primary);
+        }
+
+        .profile-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-light);
+        }
+
+        .profile-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-username {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .profile-caret {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .profile-wrap.open .profile-caret {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            min-width: 180px;
+            padding: 0.5rem;
+            z-index: 50;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            display: none;
+            flex-direction: column;
+        }
+
+        .profile-wrap.open .profile-dropdown {
+            display: flex;
+        }
+
+        .profile-dropdown-header {
+            padding: 0.5rem 0.75rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.4rem;
+        }
+
+        .profile-dropdown-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .profile-dropdown-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.855rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-family: var(--font-sans);
+            width: 100%;
+            text-align: left;
+            transition: all 0.15s;
+        }
+
+        .profile-dropdown-item svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .profile-dropdown-item:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .profile-dropdown-item.danger {
+            color: #ef4444;
+        }
+
+        .profile-dropdown-item.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .page {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--glow-color, transparent) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .stat-card.accent-visits {
+            --glow-color: rgba(124, 58, 237, 0.06);
+        }
+
+        .stat-card.accent-users {
+            --glow-color: rgba(6, 182, 212, 0.06);
+        }
+
+        .stat-card.accent-bounce {
+            --glow-color: rgba(249, 115, 22, 0.06);
+        }
+
+        .stat-card.accent-duration {
+            --glow-color: rgba(34, 197, 94, 0.06);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-delta {
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-delta.up {
+            color: var(--green);
+        }
+
+        .stat-delta.down {
+            color: var(--red);
+        }
+
+        .stat-delta svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .card-legend {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .card-body {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 220px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .four-col {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .source-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+        }
+
+        .source-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .source-row:last-child {
+            border-bottom: none;
+        }
+
+        .source-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .source-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+        }
+
+        .source-bar-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .source-bar-bg {
+            height: 4px;
+            background: var(--surface-2);
+            border-radius: 99px;
+            margin-top: 4px;
+        }
+
+        .source-bar-fill {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 99px;
+            transition: width 0.6s ease;
+        }
+
+        .source-count {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .source-pct {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .pages-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .pages-table th {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pages-table th:last-child,
+        .pages-table td:last-child {
+            text-align: right;
+        }
+
+        .pages-table td {
+            font-size: 0.855rem;
+            color: var(--text-secondary);
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pages-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pages-table td:first-child {
+            color: var(--text-primary);
+            font-weight: 500;
+            max-width: 240px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pages-table td span.badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-up {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+
+        .badge-down {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--red);
+        }
+
+        .dist-bar {
+            display: flex;
+            height: 8px;
+            border-radius: 99px;
+            overflow: hidden;
+            gap: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .dist-segment {
+            transition: width 0.6s ease;
+        }
+
+        .dist-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .dist-legend-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.845rem;
+        }
+
+        .dist-legend-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .dist-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .dist-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.845rem;
+        }
+
+        .time-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .time-card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .time-card-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .time-card-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .time-card-share {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .country-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .country-row:last-child {
+            border-bottom: none;
+        }
+
+        .country-flag {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .country-name {
+            flex: 1;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .country-bar-wrap {
+            width: 80px;
+        }
+
+        .country-bar-bg {
+            height: 3px;
+            background: var(--surface-2);
+            border-radius: 99px;
+        }
+
+        .country-bar-fill {
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 99px;
+        }
+
+        .country-count {
+            font-size: 0.855rem;
+            font-weight: 600;
+            width: 50px;
+            text-align: right;
+        }
+
+        .country-pct {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            width: 38px;
+            text-align: right;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+
+        .empty-state-sub {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 420px;
+            line-height: 1.6;
+        }
+
+        .snippet-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--accent-2);
+            word-break: break-all;
+            max-width: 540px;
+            text-align: left;
+            position: relative;
+        }
+
+        .copy-btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.35rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 1.1rem 0;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/assets/img/logo.png" alt="Kawiso" class="sidebar-logo"
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTExIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0yIDE3bDEwIDUgMTAtNU0yIDEybDEwIDUgMTAtNSIvPjwvc3ZnPg=='">
+            <span class="sidebar-brand">Kawiso</span>
+        </div>
+        <div class="site-selector">
+            <button class="site-selector-btn" id="site-selector-btn">
+                <span id="site-selector-label">
+                    <%= activeDomain || "No Domain Active" %>
+                </span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            <div class="site-dropdown" id="site-dropdown">
+                <% if (domains && domains.length> 0) { %>
+                    <% domains.forEach(d=> { %>
+                        <div class="site-dropdown-item" onclick="setDomain('<%= d %>')">
+                            <%= d %>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="site-dropdown-item" style="color:var(--text-muted);cursor:default;">No
+                                    domains yet</div>
+                                <% } %>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Account</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/account-settings" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Account Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Web Analytics</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>Main
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/map" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                            <line x1="15" y1="3" x2="15" y2="21"></line>
+                        </svg>
+                        Map
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pages" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        Pages
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <h1 class="topbar-title">Dashboard</h1>
+            <div class="topbar-controls">
+                <div class="topbar-range">
+                    <button class="range-btn" id="btn-7d">7 Days</button>
+                    <button class="range-btn active" id="btn-1m">1 Month</button>
+                    <button class="range-btn" id="btn-1y">1 Year</button>
+                    <div class="custom-range-wrap">
+                        <button class="range-btn" id="btn-custom">
+                            <svg style="width:11px;height:11px;display:inline;margin-right:4px;vertical-align:-1px;"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Custom
+                        </button>
+                        <div class="custom-popover" id="custom-popover">
+                            <div class="custom-popover-title">Custom Date Range</div>
+                            <div class="custom-popover-row">
+                                <div class="custom-popover-field">
+                                    <label for="date-start">Start</label>
+                                    <input type="date" id="date-start" name="date-start">
+                                </div>
+                                <div class="custom-popover-field">
+                                    <label for="date-end">End</label>
+                                    <input type="date" id="date-end" name="date-end">
+                                </div>
+                                <button class="custom-apply-btn" id="custom-apply">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="topbar-divider"></div>
+                <div class="profile-wrap" id="profile-wrap">
+                    <button class="profile-btn" id="profile-btn">
+                        <div class="profile-avatar" id="profile-avatar">
+                            <img src="/assets/img/profile.png" alt="Profile Picture">
+                        </div>
+                        <span class="profile-username" id="profile-username">
+                            <%= user.username.toUpperCase() %>
+                        </span>
+                        <svg class="profile-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="profile-dropdown-name" id="dd-username">
+                                Plan
+                            </div>
+                            <div class="profile-dropdown-sub"><%= userDoc.plan.replace(/^./, (c)=>c.toUpperCase()) %></div>
+                        </div>
+                        <a href="/account-settings" class="profile-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+                            Account Settings
+                        </a>
+                        <button class="profile-dropdown-item danger" id="logout-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="page">
+            <div id="empty-state" class="empty-state">
+                <div class="empty-state-icon">📡</div>
+                <div class="empty-state-title">No data yet for this period</div>
+                <p class="empty-state-sub">Add the tracking snippet below to your website. Once visitors arrive,
+                    analytics will appear here automatically.</p>
+                <div class="snippet-box">
+                    &lt;script src="<%= typeof req !=='undefined' ? req.protocol + '://' + req.get('host') : '' %>
+                        /tracker.js" data-id="<%= user.uuid %>"&gt;&lt;/script&gt;
+                </div>
+                <button class="copy-btn" id="copy-snippet-btn">Copy snippet</button>
+            </div>
+            <div id="analytics-content">
+                <div class="stat-row">
+                    <div class="stat-card accent-visits">
+                        <div class="stat-label">Total Visits</div>
+                        <div class="stat-value" id="stat-visits">—</div>
+                        <div class="stat-delta" id="delta-visits"></div>
+                    </div>
+                    <div class="stat-card accent-users">
+                        <div class="stat-label">Unique Users</div>
+                        <div class="stat-value" id="stat-users">—</div>
+                        <div class="stat-delta" id="delta-users"></div>
+                    </div>
+                    <div class="stat-card accent-bounce">
+                        <div class="stat-label">Bounce Rate</div>
+                        <div class="stat-value" id="stat-bounce">—</div>
+                        <div class="stat-delta" id="delta-bounce"></div>
+                    </div>
+                    <div class="stat-card accent-duration">
+                        <div class="stat-label">Avg. Duration</div>
+                        <div class="stat-value" id="stat-duration">—</div>
+                        <div class="stat-delta" id="delta-duration"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Visits Overview</span>
+                        <div class="card-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background:#7c3aed;"></span>
+                                Total Visits
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background:#06b6d4;"></span>
+                                Unique Users
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="visitsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Traffic Sources</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="source-list" id="traffic-sources">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Page Visits</span>
+                        </div>
+                        <div class="card-body" style="padding:0 1.5rem;">
+                            <table class="pages-table" id="pages-table">
+                                <thead>
+                                    <tr>
+                                        <th>Page</th>
+                                        <th>Visits</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pages-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="three-col">
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Browsers</span></div>
+                        <div class="card-body" id="browsers-card"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Platforms</span></div>
+                        <div class="card-body" id="platforms-card"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Devices</span></div>
+                        <div class="card-body" id="devices-card"></div>
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Languages</span></div>
+                        <div class="card-body" id="languages-card"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Screen Dimensions</span></div>
+                        <div class="card-body" id="screens-card"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Time of Day</span>
+                        <span style="font-size:0.78rem;color:var(--text-muted);">Based on visitor local time</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="four-col" id="time-cards"></div>
+                        <div class="chart-wrapper" style="height:140px;margin-top:1.25rem;">
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="padding-bottom: 0; padding-top: 0;">
+                        <div class="tabs-nav" style="display: flex; gap: 1.5rem;">
+                            <button class="tab-btn active" id="tab-countries">Countries</button>
+                            <button class="tab-btn" id="tab-timezones">Timezones</button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0 1.5rem;">
+                        <div id="countries-list"></div>
+                        <div id="timezones-list" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        let INITIAL_ANALYTICS = null;
+        const COLORS_PALETTE = [
+            '#7c3aed', '#06b6d4', '#22c55e', '#f97316',
+            '#ec4899', '#eab308', '#3b82f6', '#ef4444',
+            '#8b5cf6', '#14b8a6'
+        ];
+        Chart.defaults.color = '#737373';
+        Chart.defaults.borderColor = '#1f1f1f';
+        Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+        function fmt(n) {
+            if (!n) return '0';
+            return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+        }
+        const hourLabels = Array.from({ length: 24 }, (_, i) => {
+            const h = i % 12 || 12;
+            return h + (i < 12 ? 'am' : 'pm');
+        });
+        let visitsChart = null;
+        let timeChart = null;
+        function buildVisitsChart(labels, visitArr, userArr) {
+            const ctx = document.getElementById('visitsChart').getContext('2d');
+            const gV = ctx.createLinearGradient(0, 0, 0, 200);
+            gV.addColorStop(0, 'rgba(124,58,237,0.25)');
+            gV.addColorStop(1, 'rgba(124,58,237,0)');
+            const gU = ctx.createLinearGradient(0, 0, 0, 200);
+            gU.addColorStop(0, 'rgba(6,182,212,0.2)');
+            gU.addColorStop(1, 'rgba(6,182,212,0)');
+            if (visitsChart) visitsChart.destroy();
+            visitsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Total Visits', data: visitArr, borderColor: '#7c3aed', backgroundColor: gV, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: true, tension: 0.4 },
+                        { label: 'Unique Users', data: userArr, borderColor: '#06b6d4', backgroundColor: gU, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: true, tension: 0.4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161616', borderColor: '#2a2a2a', borderWidth: 1, titleColor: '#f5f5f5', bodyColor: '#a3a3a3', padding: 10 } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 11 } } },
+                        y: { grid: { color: '#181818' }, ticks: { font: { size: 11 }, callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v } }
+                    }
+                }
+            });
+        }
+        function buildTimeChart(hourly) {
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            if (timeChart) timeChart.destroy();
+            timeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hourLabels,
+                    datasets: [{
+                        label: 'Visits', data: hourly,
+                        backgroundColor: hourly.map((_, i) => {
+                            if (i >= 6 && i < 12) return 'rgba(234,179,8,0.7)';
+                            if (i >= 12 && i < 18) return 'rgba(124,58,237,0.7)';
+                            if (i >= 18 && i < 24) return 'rgba(249,115,22,0.7)';
+                            return 'rgba(6,182,212,0.5)';
+                        }),
+                        borderRadius: 3, borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161616', borderColor: '#2a2a2a', borderWidth: 1, titleColor: '#f5f5f5', bodyColor: '#a3a3a3', padding: 8 } },
+                    scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 10 } } }, y: { display: false } }
+                }
+            });
+        }
+        function setDelta(id, val) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (val === "New") {
+                el.className = 'stat-delta up';
+                el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>New';
+                return;
+            }
+            if (val > 0) {
+                el.className = 'stat-delta up';
+                el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>' + val + '%';
+            } else if (val < 0) {
+                el.className = 'stat-delta down';
+                el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' + Math.abs(val) + '%';
+            } else {
+                el.className = 'stat-delta';
+                el.innerHTML = '0%';
+            }
+        }
+        function renderStatCards(data) {
+            document.getElementById('stat-visits').textContent = fmt(data.totalVisits);
+            document.getElementById('stat-users').textContent = fmt(data.uniqueUsers);
+            document.getElementById('stat-duration').textContent = data.avgDuration || '—';
+            document.getElementById('stat-bounce').textContent = (data.bounceRate || 0) + '%';
+            if (data.deltas) {
+                setDelta('delta-visits', data.deltas.visitsDelta);
+                setDelta('delta-users', data.deltas.usersDelta);
+                setDelta('delta-bounce', data.deltas.bounceDelta);
+                setDelta('delta-duration', data.deltas.durationDelta);
+            } else {
+                ['delta-visits', 'delta-users', 'delta-bounce', 'delta-duration'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = '';
+                });
+            }
+        }
+        function renderSources(sources) {
+            const el = document.getElementById('traffic-sources');
+            if (!sources || !sources.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;padding:1rem 0;">No traffic sources yet.</div>'; return; }
+            const max = Math.max(...sources.map(s => s.count));
+            el.innerHTML = sources.map(s => `
+                <div class="source-row">
+                    <div class="source-name"><div class="source-icon">${s.icon}</div><span>${s.name}</span></div>
+                    <div style="flex:1;min-width:60px;"><div class="source-bar-bg"><div class="source-bar-fill" style="width:${max ? (s.count / max * 100).toFixed(1) : 0}%"></div></div></div>
+                    <div><div class="source-count">${fmt(s.count)}</div><div class="source-pct">${s.pct}%</div></div>
+                </div>`).join('');
+        }
+        function renderPages(pages) {
+            const tbody = document.getElementById('pages-tbody');
+            if (!pages || !pages.length) { tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);font-size:0.85rem;padding:1rem 0;">No page data yet.</td></tr>'; return; }
+            tbody.innerHTML = pages.map(p => `
+                <tr>
+                    <td>${p.path}</td>
+                    <td>${fmt(p.visits)}</td>
+                    <td><span class="badge ${p.isUp ? 'badge-up' : 'badge-down'}">${p.trend}</span></td>
+                </tr>`).join('');
+        }
+        function renderDist(targetId, items) {
+            const el = document.getElementById(targetId);
+            if (!items || !items.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:0.83rem;">No data yet.</div>'; return; }
+            items = items.map((it, i) => ({ ...it, color: COLORS_PALETTE[i % COLORS_PALETTE.length] }));
+            el.innerHTML = `
+                <div class="dist-bar">${items.map(it => `<div class="dist-segment" style="width:${it.pct}%;background:${it.color};"></div>`).join('')}</div>
+                <div class="dist-legend">${items.map(it => `
+                    <div class="dist-legend-row">
+                        <div class="dist-legend-label"><div class="dist-swatch" style="background:${it.color};"></div>${it.label}</div>
+                        <div class="dist-value">${it.pct}%</div>
+                    </div>`).join('')}
+                </div>`;
+        }
+        function renderTime(tod, hourly) {
+            const cfg = [
+                { key: 'morning', icon: '🌅', label: 'Morning', range: '6am–12pm' },
+                { key: 'afternoon', icon: '☀️', label: 'Afternoon', range: '12pm–6pm' },
+                { key: 'evening', icon: '🌆', label: 'Evening', range: '6pm–12am' },
+                { key: 'night', icon: '🌙', label: 'Night', range: '12am–6am' },
+            ];
+            const total = Object.values(tod).reduce((a, b) => a + b, 0) || 1;
+            document.getElementById('time-cards').innerHTML = cfg.map(t => `
+                <div class="time-card">
+                    <div class="time-card-icon">${t.icon}</div>
+                    <div class="time-card-label">${t.label}</div>
+                    <div class="time-card-value">${fmt(tod[t.key] || 0)}</div>
+                    <div class="time-card-share">${t.range} · ${Math.round((tod[t.key] || 0) / total * 100)}%</div>
+                </div>`).join('');
+            buildTimeChart(hourly || Array(24).fill(0));
+        }
+        function renderCountries(countries) {
+            const el = document.getElementById('countries-list');
+            if (!countries || !countries.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;padding:1rem 0;">No country data yet.</div>'; return; }
+            const max = Math.max(...countries.map(c => c.count));
+            const total = countries.reduce((a, c) => a + c.count, 0) || 1;
+            el.innerHTML = countries.map(c => `
+                <div class="country-row">
+                    <div class="country-flag">${c.flag || '🌐'}</div>
+                    <div class="country-name">${c.name}</div>
+                    <div class="country-bar-wrap"><div class="country-bar-bg"><div class="country-bar-fill" style="width:${max ? (c.count / max * 100).toFixed(0) : 0}%"></div></div></div>
+                    <div class="country-count">${fmt(c.count)}</div>
+                    <div class="country-pct">${(c.count / total * 100).toFixed(1)}%</div>
+                </div>`).join('');
+        }
+        function renderTimezones(timezones) {
+            const el = document.getElementById('timezones-list');
+            if (!timezones || !timezones.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;padding:1rem 0;">No timezone data yet.</div>'; return; }
+            const max = Math.max(...timezones.map(t => t.count));
+            const total = timezones.reduce((a, t) => a + t.count, 0) || 1;
+            el.innerHTML = timezones.map(t => `
+                <div class="country-row">
+                    <div class="country-flag">🕒</div>
+                    <div class="country-name">${t.name}</div>
+                    <div class="country-bar-wrap"><div class="country-bar-bg"><div class="country-bar-fill" style="width:${max ? (t.count / max * 100).toFixed(0) : 0}%"></div></div></div>
+                    <div class="country-count">${fmt(t.count)}</div>
+                    <div class="country-pct">${(t.count / total * 100).toFixed(1)}%</div>
+                </div>`).join('');
+        }
+
+        function renderAll(data) {
+            if (!data) {
+                document.getElementById('analytics-content').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'flex';
+                return;
+            }
+            document.getElementById('analytics-content').style.display = '';
+            document.getElementById('empty-state').style.display = 'none';
+            renderStatCards(data);
+            buildVisitsChart(data.chartLabels || [], data.visitArr || [], data.userArr || []);
+            renderSources(data.sources);
+            renderPages(data.pages);
+            renderDist('browsers-card', data.browsers);
+            renderDist('platforms-card', data.platforms);
+            renderDist('devices-card', data.devices);
+            renderDist('languages-card', data.languages);
+            renderDist('screens-card', data.screens);
+            renderTime(data.timeOfDay || {}, data.hourly);
+            renderCountries(data.countries);
+            renderTimezones(data.timezones);
+        }
+        fetchAndRender(); // Fetch on load to get data
+        setInterval(async () => {
+            fetchAndRender();
+            try {
+                const res = await fetch('/api/domains');
+                const json = await res.json();
+                if (json.ok && json.domains) {
+                    const dropdown = document.getElementById('site-dropdown');
+                    if (json.domains.length === 0) {
+                        dropdown.innerHTML = '<div class="site-dropdown-item" style="color:var(--text-muted);cursor:default;">No domains yet</div>';
+                    } else {
+                        dropdown.innerHTML = json.domains.map(d => `<div class="site-dropdown-item" onclick="setDomain('${d}')">${d}</div>`).join('');
+                    }
+                    const currentLabel = document.getElementById('site-selector-label').textContent.trim();
+                    if ((currentLabel === 'No Domain Active' || (!json.domains.includes(currentLabel) && currentLabel !== "No Domain Active")) && json.domains.length > 0) {
+                        setDomain(json.domains[0]);
+                    }
+                }
+            } catch (e) { }
+        }, 20 * 1000);
+
+        async function init() {
+            fetchAndRender();
+            try {
+                const res = await fetch('/api/domains');
+                const json = await res.json();
+                if (json.ok && json.domains) {
+                    const dropdown = document.getElementById('site-dropdown');
+                    if (json.domains.length === 0) {
+                        dropdown.innerHTML = '<div class="site-dropdown-item" style="color:var(--text-muted);cursor:default;">No domains yet</div>';
+                    } else {
+                        dropdown.innerHTML = json.domains.map(d => `<div class="site-dropdown-item" onclick="setDomain('${d}')">${d}</div>`).join('');
+                    }
+                    const currentLabel = document.getElementById('site-selector-label').textContent.trim();
+                    if ((currentLabel === 'No Domain Active' || (!json.domains.includes(currentLabel) && currentLabel !== "No Domain Active")) && json.domains.length > 0) {
+                        setDomain(json.domains[0]);
+                    }
+                }
+            } catch (e) { }
+        }
+
+        // Core
+        const customBtn = document.getElementById('btn-custom');
+        const customPopover = document.getElementById('custom-popover');
+        const customApply = document.getElementById('custom-apply');
+        let currentFetchParams = { range: '1m', domain: '<%= activeDomain || "" %>' };
+        async function fetchAndRender() {
+            try {
+                const res = await fetch('/api/analytics?' + new URLSearchParams(currentFetchParams));
+                const json = await res.json();
+                renderAll(json.data);
+            } catch (e) { console.error('Analytics fetch failed', e); }
+        }
+        function setActiveRange(btn, rangeStr) {
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            customPopover.classList.remove('open');
+            currentFetchParams.range = rangeStr;
+            delete currentFetchParams.start;
+            delete currentFetchParams.end;
+            fetchAndRender();
+        }
+        document.getElementById('btn-7d').addEventListener('click', function () { setActiveRange(this, '7d'); });
+        document.getElementById('btn-1m').addEventListener('click', function () { setActiveRange(this, '1m'); });
+        document.getElementById('btn-1y').addEventListener('click', function () { setActiveRange(this, '1y'); });
+        customBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            customBtn.classList.add('active');
+            customPopover.classList.toggle('open');
+            document.getElementById('site-dropdown').classList.remove('open');
+        });
+        customApply.addEventListener('click', () => {
+            const start = document.getElementById('date-start').value;
+            const end = document.getElementById('date-end').value;
+            if (!start || !end) return;
+            customBtn.innerHTML = '';
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor'); icon.setAttribute('stroke-width', '2');
+            icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round');
+            icon.style.cssText = 'width:11px;height:11px;display:inline;margin-right:4px;vertical-align:-1px;';
+            icon.innerHTML = '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>';
+            customBtn.appendChild(icon);
+            const fmtD = d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+            customBtn.appendChild(document.createTextNode(`${fmtD(start)} – ${fmtD(end)}`));
+            customPopover.classList.remove('open');
+            currentFetchParams.range = 'custom';
+            currentFetchParams.start = start;
+            currentFetchParams.end = end;
+            fetchAndRender();
+        });
+        document.getElementById('tab-countries').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('tab-timezones').classList.remove('active');
+            document.getElementById('countries-list').style.display = 'block';
+            document.getElementById('timezones-list').style.display = 'none';
+        });
+        document.getElementById('tab-timezones').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('tab-countries').classList.remove('active');
+            document.getElementById('timezones-list').style.display = 'block';
+            document.getElementById('countries-list').style.display = 'none';
+        });
+        document.addEventListener('click', (e) => {
+            if (!customPopover.contains(e.target) && e.target !== customBtn) customPopover.classList.remove('open');
+            if (!siteDropdown.contains(e.target) && e.target !== siteSelectorBtn && !siteSelectorBtn.contains(e.target)) siteDropdown.classList.remove('open');
+        });
+        const siteSelectorBtn = document.getElementById('site-selector-btn');
+        const siteDropdown = document.getElementById('site-dropdown');
+        siteSelectorBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            siteDropdown.classList.toggle('open');
+            customPopover.classList.remove('open');
+        });
+        function setDomain(domain) {
+            document.getElementById('site-selector-label').textContent = domain;
+            currentFetchParams.domain = domain;
+            fetchAndRender();
+            siteDropdown.classList.remove('open');
+        }
+        const profileWrap = document.getElementById('profile-wrap');
+        const profileBtn = document.getElementById('profile-btn');
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); profileWrap.classList.toggle('open'); customPopover.classList.remove('open'); siteDropdown.classList.remove('open');
+        });
+        document.addEventListener('click', (e) => { if (!profileWrap.contains(e.target)) profileWrap.classList.remove('open'); });
+        document.getElementById('logout-btn').addEventListener('click', () => { window.location.href = '/api/logout'; });
+        const copyBtn = document.getElementById('copy-snippet-btn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                const text = `<script src="${window.location.origin}/tracker.js" data-id="<%= user.uuid %>"><\/script>`;
+                navigator.clipboard.writeText(text).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+                });
+            });
+        }
+
+        // Init
+        init()
+    </script>
+</body>
+
+</html>
