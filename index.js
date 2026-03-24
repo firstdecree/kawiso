@@ -9,7 +9,6 @@
     const UAParser = require("ua-parser-js")
     const requestIP = require("request-ip")
     const { parse } = require("smol-toml")
-    const { isbot } = require("isbot")
     const express = require("express")
     const hashJS = require("hash.js")
     const cryptr = require("cryptr")
@@ -173,22 +172,25 @@
         prevHits.forEach(h => { prevPageMap[h.path] = (prevPageMap[h.path] || 0) + 1 })
 
         const pages = Object.entries(pageMap)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 10)
-            .map(([path, count]) => {
-                const prevCount = prevPageMap[path] || 0;
-                let trend = "0%";
-                let isUp = true;
-                if (prevCount === 0) {
-                    trend = "New";
-                    isUp = true;
-                } else {
-                    const delta = Math.round(((count - prevCount) / prevCount) * 100);
-                    trend = (delta > 0 ? "+" : "") + delta + "%";
-                    isUp = delta >= 0;
-                }
-                return { path, visits: count, trend, isUp };
-            })
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([path, count]) => {
+            const prevCount = prevPageMap[path] || 0
+            var trend = "0%"
+            var isUp = true
+
+            if (prevCount === 0) {
+                trend = "New"
+                isUp = true
+            } else {
+                const delta = Math.round(((count - prevCount) / prevCount) * 100)
+                trend = (delta > 0 ? "+" : "") + delta + "%"
+                isUp = delta >= 0
+            }
+
+            return { path, visits: count, trend, isUp }
+        })
+
         const browserMap = {}
         hits.forEach(h => {
             const ua = new UAParser(h.ua || "").getBrowser().name || "Other"
@@ -267,8 +269,8 @@
 
         const prevStats = await getBasicStats(hashedUsername, prevStart, prevEnd, domain)
         const calcDelta = (curr, prev) => {
-            if (prev === 0) return curr > 0 ? "New" : 0;
-            return Math.round(((curr - prev) / prev) * 100);
+            if (prev === 0) return curr > 0 ? "New" : 0
+            return Math.round(((curr - prev) / prev) * 100)
         }
 
         const deltas = {
@@ -312,10 +314,6 @@
     web.use((req, res, next) => {
         // Validations
         if (req.path.endsWith(".html")) return res.redirect(req.path.replace(/.html$/, ""))
-        if (req.path !== "/analytics.js" && req.path !== "/collect") {
-            const userAgent = req.headers["user-agent"]
-            if (!userAgent || isbot(userAgent)) return res.redirect("https://firstdecree.org/")
-        }
 
         // Core
         next()
@@ -624,6 +622,7 @@
 
         // Validations
         if (!Array.isArray(domains)) return res.status(400).json({ ok: false })
+        if (domains.some((url) => !/^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}$/.test(url.split("/")[0]))) return res.status(400).json({ ok: false })
         await users.updateOne({ hashedUsername: user.hashedUsername }, { $set: { "settings.whitelistedDomains": domains } })
 
         // Main

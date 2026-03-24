@@ -5,10 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kawiso</title>
+    <link rel="canonical" href="https://kawiso.vercel.app/">
+    <meta property="og:url" content="https://kawiso.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Kawiso">
+    <meta property="og:title" content="Kawiso">
+    <meta property="og:description"
+        content="Powerful, lightweight and user-friendly privacy-focused analytics platform. Cookieless, open-source and fully compliant with the First Decree.">
+    <meta name="twitter:description"
+        content="Powerful, lightweight and user-friendly privacy-focused analytics platform. Cookieless, open-source and fully compliant with the First Decree.">
+    <meta name="theme-color" content="#FFFFFF">
     <meta name="description"
         content="Powerful, lightweight and user-friendly privacy-focused analytics platform. Cookieless, open-source and fully compliant with the First Decree.">
     <link rel="icon" href="/assets/img/favicon.png" type="image/png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -18,45 +27,45 @@
     <script>
         // Main
         document.addEventListener("DOMContentLoaded", () => {
-        const observerOptions = { threshold: 0.1 }
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = "running"
-                    observer.unobserve(entry.target)
-                }
-            })
-        }, observerOptions)
+            const observerOptions = { threshold: 0.1 }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = "running"
+                        observer.unobserve(entry.target)
+                    }
+                })
+            }, observerOptions)
 
-        document.querySelectorAll(".feature-card, .pricing-card, .section-header").forEach((el) => {
-            el.style.animationPlayState = "paused"
-            observer.observe(el)
+            document.querySelectorAll(".feature-card, .pricing-card, .section-header").forEach((el) => {
+                el.style.animationPlayState = "paused"
+                observer.observe(el)
+            })
+
+            // Slider
+            const slider = document.getElementById("screenshot-slider")
+            const prevBtn = document.getElementById("slider-prev")
+            const nextBtn = document.getElementById("slider-next")
+            let currentSlide = 0
+            const slides = slider.children
+            const totalSlides = slides.length
+
+            const updateSlider = () => {
+                slider.style.transform = `translateX(-${currentSlide * 100}%)`
+            }
+
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener("click", () => {
+                    currentSlide = (currentSlide === 0) ? totalSlides - 1 : currentSlide - 1
+                    updateSlider()
+                })
+
+                nextBtn.addEventListener("click", () => {
+                    currentSlide = (currentSlide === totalSlides - 1) ? 0 : currentSlide + 1
+                    updateSlider()
+                })
+            }
         })
-
-        // Slider
-        const slider = document.getElementById("screenshot-slider")
-        const prevBtn = document.getElementById("slider-prev")
-        const nextBtn = document.getElementById("slider-next")
-        let currentSlide = 0
-        const slides = slider.children
-        const totalSlides = slides.length
-
-        const updateSlider = () => {
-            slider.style.transform = `translateX(-${currentSlide * 100}%)`
-        }
-
-        if (prevBtn && nextBtn) {
-            prevBtn.addEventListener("click", () => {
-                currentSlide = (currentSlide === 0) ? totalSlides - 1 : currentSlide - 1
-                updateSlider()
-            })
-
-            nextBtn.addEventListener("click", () => {
-                currentSlide = (currentSlide === totalSlides - 1) ? 0 : currentSlide + 1
-                updateSlider()
-            })
-        }
-    })
     </script>
     <style>
         :root {
@@ -776,16 +785,22 @@
     <section id="screenshot" class="section section-light">
         <div class="section-inner">
             <div class="screenshot-container" style="position: relative; overflow: hidden; border-radius: 12px;">
-                <button id="slider-prev" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
+                <button id="slider-prev"
+                    style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
                     &#10094;
                 </button>
-                <button id="slider-next" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
+                <button id="slider-next"
+                    style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 1.2rem; transition: background 0.2s;">
                     &#10095;
                 </button>
-                <div class="screenshot-wrapper" id="screenshot-slider" style="display: flex; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
-                    <img src="./img/screenshots/kawiso-1.png" alt="Kawiso Dashboard Preview 1" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
-                    <img src="./img/screenshots/kawiso-2.png" alt="Kawiso Dashboard Preview 2" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
-                    <img src="./img/screenshots/kawiso-3.png" alt="Kawiso Dashboard Preview 3" class="screenshot-img" style="flex-shrink: 0; width: 100%;">
+                <div class="screenshot-wrapper" id="screenshot-slider"
+                    style="display: flex; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
+                    <img src="./img/screenshots/kawiso-1.png" alt="Kawiso Dashboard Preview 1" class="screenshot-img"
+                        style="flex-shrink: 0; width: 100%;">
+                    <img src="./img/screenshots/kawiso-2.png" alt="Kawiso Dashboard Preview 2" class="screenshot-img"
+                        style="flex-shrink: 0; width: 100%;">
+                    <img src="./img/screenshots/kawiso-3.png" alt="Kawiso Dashboard Preview 3" class="screenshot-img"
+                        style="flex-shrink: 0; width: 100%;">
                 </div>
             </div>
         </div>
@@ -838,7 +853,10 @@
             <div class="section-header">
                 <div class="section-subtitle">Simple Plans</div>
                 <h2 class="section-title">Transparent pricing for everyone</h2>
-                <p style="margin-top: 0.8rem; color: var(--text-secondary); max-width: 600px; margin-left: auto; margin-right: auto; font-size: 0.9rem; line-height: 1.5;">All your purchases will be a great help to <em style="color:var(--text-primary)">The First Decree</em>.</p>
+                <p
+                    style="margin-top: 0.8rem; color: var(--text-secondary); max-width: 600px; margin-left: auto; margin-right: auto; font-size: 0.9rem; line-height: 1.5;">
+                    All your purchases will be a great help to <em style="color:var(--text-primary)">The First
+                        Decree</em>.</p>
             </div>
             <div class="pricing-grid">
                 <div class="pricing-card">
